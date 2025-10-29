@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <string.h>
 
-// Definição da Estrutura da Carta
-typedef struct {
+    // Definição da Estrutura da Carta
+    typedef struct {
     char nome[50];
     char codigo[10];
     char estado[50];
-    
-    // Atributos de entrada 
-    unsigned long int populacao; 
+
+    // Atributos de entrada
+    unsigned long int populacao;
     float area;
     float pib_bilhoes;
     int pontos_turisticos;
-    
-    // Atributos calculados
+     // Atributos calculados
+
     float densidade_populacional;
     float pib_per_capita;
     float super_poder;
@@ -21,57 +21,67 @@ typedef struct {
 
 // --- FUNÇÕES DE LÓGICA ---
 
-// Função para calcular os atributos derivados (Densidade, PIB Per Capita e Super Poder)
+// Função para calcular atributos derivados (Densidade, PIB Per Capita e Super Poder).
 void calcular_atributos(Carta *c) {
-    
+
     // Calcular Densidade Populacional: População / Área
-    if (c->area > 0) {
-        // Casting para float para o cálculo
+    if (c->area > 0)
+    // Casting para float para o cálculo
         c->densidade_populacional = (float)c->populacao / c->area;
-    } else {
+    else
         c->densidade_populacional = 0;
-    }
 
     // Calcular PIB per Capita: (PIB Total) / População
-    // Primeiro, converte o PIB de Bilhões para o valor total
-    float pib_total = c->pib_bilhoes * 1000000000.0; 
-    
-    if (c->populacao > 0) {
-        c->pib_per_capita = pib_total / (float)c->populacao;
-    } else {
-        c->pib_per_capita = 0;
-    }
+    // Primeiro, converte o PIB de Bilhões para o valor total  
 
-    // Calcular Super Poder
-     
+    float pib_total = c->pib_bilhoes * 1000000000.0;
+    if (c->populacao > 0)
+        c->pib_per_capita = pib_total / (float)c->populacao;
+    else
+        c->pib_per_capita = 0;
+
+    // Calcular Super Poder 
     // Para simplificar e evitar somar um número grande (PIB total), soma o PIB em bilhões
+
     float inverso_densidade = (c->densidade_populacional > 0) ? (1.0 / c->densidade_populacional) : 0.0;
-    
-    c->super_poder = 
-        (float)c->populacao + 
-        c->area + 
-        c->pib_bilhoes + 
-        (float)c->pontos_turisticos + 
-        c->pib_per_capita + 
-        inverso_densidade;
+
+    c->super_poder = (float)c->populacao + c->area + c->pib_bilhoes +
+                     (float)c->pontos_turisticos + c->pib_per_capita + inverso_densidade;
 }
 
-// Função para exibir o resultado da comparação no formato exigido
-void exibir_resultado_comparacao(const char *atributo, int carta1_venceu) {
-    printf("%s: ", atributo);
-    if (carta1_venceu) {
-        printf("Carta 1 venceu (1)\n");
-    } else {
-        printf("Carta 2 venceu (0)\n");
+// Função para exibir atributo escolhido
+float obter_valor(Carta c, int opcao) {
+    switch (opcao) {
+        case 1: return (float)c.populacao;
+        case 2: return c.area;
+        case 3: return c.pib_bilhoes;
+        case 4: return (float)c.pontos_turisticos;
+        case 5: return c.densidade_populacional;
+        case 6: return c.pib_per_capita;
+        case 7: return c.super_poder;
+        default: return 0;
+    }
+}
+
+// Função para mostrar o nome do atributo
+const char* nome_atributo(int opcao) {
+    switch (opcao) {
+        case 1: return "Populacao";
+        case 2: return "Area";
+        case 3: return "PIB (bilhoes)";
+        case 4: return "Pontos Turisticos";
+        case 5: return "Densidade Populacional";
+        case 6: return "PIB per Capita";
+        case 7: return "Super Poder";
+        default: return "Invalido";
     }
 }
 
 // --- PROGRAMA PRINCIPAL ---
 int main() {
-    // Declaração das estruturas
+// Declaração das estruturas    
     Carta carta1, carta2;
 
-    
     // Carta 1 - (Natal) RN
     strcpy(carta1.estado, "RN");
     strcpy(carta1.codigo, "A01");
@@ -82,54 +92,68 @@ int main() {
     carta1.pontos_turisticos = 18;
 
     // Carta 2 - (Fortaleza) CEARA
-    strcpy(carta2.estado, "Ceara");
+    strcpy(carta2.estado, "CE");
     strcpy(carta2.codigo, "B02");
     strcpy(carta2.nome, "Fortaleza");
     carta2.populacao = 9268836;
     carta2.area = 1488944.0;
-    carta2.pib_bilhoes = 2055.0; 
+    carta2.pib_bilhoes = 2055.0;
     carta2.pontos_turisticos = 20;
 
-    // Cálculo de todos os atributos derivados
+    // Cálculo de todos os atributos.
     calcular_atributos(&carta1);
     calcular_atributos(&carta2);
 
     // Exibição dos Dados Finais
-    printf("\n--- Dados Finais da Carta 1 (%s) ---\n", carta1.nome);
-    printf("Populacao: %lu , Area: %.2f , PIB: %.2f (bilhoes) , Pontos: %d\n", 
-           carta1.populacao, carta1.area, carta1.pib_bilhoes, carta1.pontos_turisticos);
-    printf("Densidade: %.2f hab/km² , PIB/Capita: %.2f R$ , Super Poder: %.2f\n", 
-           carta1.densidade_populacional, carta1.pib_per_capita, carta1.super_poder);
-           
-    printf("\n--- Dados Finais da Carta 2 (%s) ---\n", carta2.nome);
-    printf("Populacao: %lu , Area: %.2f , PIB: %.2f (bilhoes) , Pontos: %d\n", 
-           carta2.populacao, carta2.area, carta2.pib_bilhoes, carta2.pontos_turisticos);
-    printf("Densidade: %.2f hab/km² , PIB/Capita: %.2f R$ , Super Poder: %.2f\n", 
-           carta2.densidade_populacional, carta2.pib_per_capita, carta2.super_poder);
+    printf("\n=== SUPER TRUNFO FINAL ===\n");
+    printf("Cartas em batalha:\n1. %s (%s)\n2. %s (%s)\n\n", carta1.nome, carta1.estado, carta2.nome, carta2.estado);
 
-    // Comparação Atributo por Atributo
-    printf("\n\n--- Resultado da Batalha (Comparacao de Cartas) ---\n");
+    //Menu
+    int atributo1, atributo2;
 
-    // 1. População (MAIOR valor vence)
-    exibir_resultado_comparacao("Populacao", carta1.populacao > carta2.populacao);
+    printf("Escolha o primeiro atributo para comparar:\n");
+    printf("1. Populacao\n2. Area\n3. PIB (bilhoes)\n4. Pontos Turisticos\n5. Densidade Populacional\n6. PIB per Capita\n7. Super Poder\n> ");
+    scanf("%d", &atributo1);
 
-    // 2. Area (MAIOR valor vence)
-    exibir_resultado_comparacao("Area", carta1.area > carta2.area);
+    printf("\nEscolha o segundo atributo (diferente do primeiro):\n");
+    for (int i = 1; i <= 7; i++) {
+        if (i != atributo1)
+            printf("%d. %s\n", i, nome_atributo(i));
+    }
+    printf("> ");
+    scanf("%d", &atributo2);
 
-    // 3. PIB (MAIOR valor vence)
-    exibir_resultado_comparacao("PIB (bilhoes)", carta1.pib_bilhoes > carta2.pib_bilhoes);
+    if (atributo1 == atributo2 || atributo1 < 1 || atributo1 > 7 || atributo2 < 1 || atributo2 > 7) {
+        printf("\n Opções inválidas. Tente novamente.\n");
+        return 0;
+    }
 
-    // 4. Pontos Turísticos (MAIOR valor vence)
-    exibir_resultado_comparacao("Pontos Turisticos", carta1.pontos_turisticos > carta2.pontos_turisticos);
-    
-    // 5. Densidade Populacional (ATENÇÃO: MENOR valor vence)
-    exibir_resultado_comparacao("Densidade Populacional", carta1.densidade_populacional < carta2.densidade_populacional);
-    
-    // 6. PIB per Capita (MAIOR valor vence)
-    exibir_resultado_comparacao("PIB per Capita", carta1.pib_per_capita > carta2.pib_per_capita);
+    // Comparações
+    float valor1a = obter_valor(carta1, atributo1);
+    float valor2a = obter_valor(carta2, atributo1);
+    float valor1b = obter_valor(carta1, atributo2);
+    float valor2b = obter_valor(carta2, atributo2);
 
-    // 7. Super Poder (MAIOR valor vence)
-    exibir_resultado_comparacao("Super Poder", carta1.super_poder > carta2.super_poder);
+    // Exceção: Densidade Populacional (menor vence)
+    int carta1_v1 = (atributo1 == 5) ? (valor1a < valor2a) : (valor1a > valor2a);
+    int carta1_v2 = (atributo2 == 5) ? (valor1b < valor2b) : (valor1b > valor2b);
+
+    float soma1 = valor1a + valor1b;
+    float soma2 = valor2a + valor2b;
+
+    printf("\n=== RESULTADO DA BATALHA ===\n");
+    printf("Atributos escolhidos: %s e %s\n\n", nome_atributo(atributo1), nome_atributo(atributo2));
+
+    printf("%s -> %.2f | %.2f | Soma: %.2f\n", carta1.nome, valor1a, valor1b, soma1);
+    printf("%s -> %.2f | %.2f | Soma: %.2f\n\n", carta2.nome, valor2a, valor2b, soma2);
+
+    if (soma1 == soma2)
+        printf("Empate!\n");
+    else
+        printf("%s venceu a rodada! %s\n",
+               (soma1 > soma2) ? carta1.nome : carta2.nome,
+               (soma1 > soma2) ? "🏆" : "😢");
 
     return 0;
 }
+
